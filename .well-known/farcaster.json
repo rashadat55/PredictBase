@@ -1,38 +1,34 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjEzMjc2ODIsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg2QjVDNEUxRTExMjE3MzE4ZTAzOWVFNDBCMjYxNzQzMTZmODk2YTdEIn0",
-    "payload": "eyJkb21haW4iOiJwcmVkaWN0YmFzZS1zY29yZS52ZXJjZWwuYXBwIn0",
-    "signature": "tZL96jVCfXF4pqn+0CKJQaKmraiEAOSDYUIPBJjlDthFzhvermgRo8x8BNmBBP6998b37+TaqT6x392z1bg1hxs="
-  },
-  "frame": {
-    "version": "next",
-    "name": "PredictBase",
-    "description": "Predict World Cup 2026 matches and win USDC on Base.",
-    "primaryCategory": "games",
-    "iconUrl": "https://predictbase-score.vercel.app/icon.png",
-    "homeUrl": "https://predictbase-score.vercel.app",
-    "imageUrl": "https://predictbase-score.vercel.app/preview.png",
-    "buttonTitle": "⚽ Predict & Win USDC",
-    "splashImageUrl": "https://predictbase-score.vercel.app/icon.png",
-    "splashBackgroundColor": "#05070a"
+    "header": "PORTALDAN_GELECEK_HEADER",
+    "payload": "PORTALDAN_GELECEK_PAYLOAD",
+    "signature": "PORTALDAN_GELECEK_SIGNATURE"
   },
   "frame": {
     "version": "1",
     "name": "PredictBase WC2026",
-    "subtitle": "Predict & Win USDC",
-    "description": "Predict World Cup 2026 matches on Base Network and win prizes.",
+    "subtitle": "Predict scores, win USDC.",
+    "description": "Predict World Cup 2026 match scores on the Base network. The ultimate sports prediction experience on Farcaster.",
     "iconUrl": "https://predictbase-score.vercel.app/icon.png",
     "homeUrl": "https://predictbase-score.vercel.app",
     "imageUrl": "https://predictbase-score.vercel.app/preview.png",
     "splashImageUrl": "https://predictbase-score.vercel.app/icon.png",
     "splashBackgroundColor": "#05070a",
     "primaryCategory": "games",
-    "tags": ["game", "prediction", "farcaster", "sports"],
-    "tagline": "Predict matches, win prizes",
+    "tags": [
+      "game",
+      "sports",
+      "prediction",
+      "base"
+    ],
+    "tagline": "Predict & Win USDC",
+    "buttonTitle": "⚽ Predict & Win",
     "heroImageUrl": "https://predictbase-score.vercel.app/preview.png",
-    "screenshotUrls": ["https://predictbase-score.vercel.app/preview.png"],
+    "screenshotUrls": [
+      "https://predictbase-score.vercel.app/preview.png"
+    ],
     "ogTitle": "PredictBase",
-    "ogDescription": "Predict matches on Base Network",
+    "ogDescription": "Predict WC 2026 matches and win.",
     "ogImageUrl": "https://predictbase-score.vercel.app/preview.png"
   }
 }
