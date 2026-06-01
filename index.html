@@ -1,11 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PredictBase — WC 2026 Full Season</title>
+
+    <!-- 1. Farcaster Frame v2 Meta Tag (Önizleme için kritik) -->
+    <meta name="fc:frame" content='{"version":"next","imageUrl":"https://predictbase-score.vercel.app/preview.png","buttonTitle":"⚽ Predict & Win USDC","splashImageUrl":"https://predictbase-score.vercel.app/icon.png","splashBackgroundColor":"#05070a"}' />
+
+    <!-- 2. Open Graph Tags (Genel link önizlemesi için) -->
+    <meta property="og:title" content="PredictBase" />
+    <meta property="og:description" content="Predict World Cup 2026 matches and win USDC on Base." />
+    <meta property="og:image" content="https://predictbase-score.vercel.app/preview.png" />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root { --green: #00e87a; --bg: #05070a; --border: rgba(255,255,255,0.08); }
         body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; padding-bottom: 80px; }
@@ -233,7 +244,6 @@ window.openModal = (id) => {
 };
 
 document.getElementById('confirm-btn').onclick = () => {
-    // Base & On-chain logic placeholders
     alert("Predict confirmed! Transaction sending via Base...");
     document.getElementById('predict-modal').classList.remove('open');
 };
