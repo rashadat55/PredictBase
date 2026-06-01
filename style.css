@@ -1,5 +1,5 @@
 :root { --green: #00e87a; --bg: #05070a; --border: rgba(255,255,255,0.08); }
-body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
 .font-display { font-family: 'Barlow Condensed', sans-serif; }
 .card { background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid var(--border); border-radius: 20px; }
 .neon-g { color: var(--green); text-shadow: 0 0 15px rgba(0,232,122,0.3); }
