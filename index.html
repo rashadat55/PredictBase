@@ -30,7 +30,8 @@
 <div class="header-wrap px-4 py-3">
     <div class="flex justify-between items-center mb-3">
         <div class="font-display text-lg font-black neon-g tracking-tighter uppercase">⚽ PREDICTBASE WC2026</div>
-        <div class="text-[9px] font-bold text-green-400 border border-green-500/20 px-3 py-1 rounded-lg uppercase">Connect</div>
+        <!-- Connect butonu Farcaster verisi için güncellenebilir -->
+        <div id="user-info" class="text-[9px] font-bold text-green-400 border border-green-500/20 px-3 py-1 rounded-lg uppercase">Loading...</div>
     </div>
     <input type="text" id="match-search" class="search-bar text-xs" placeholder="Search team, group, or stadium (104 matches)...">
 </div>
@@ -60,11 +61,14 @@
                 <div id="m-away-code" class="text-[10px] text-gray-500 font-black mt-2 uppercase">AWAY</div>
             </div>
         </div>
-        <button class="btn-primary w-full py-4 font-display text-sm uppercase tracking-widest">Confirm Prediction</button>
+        <button id="confirm-btn" class="btn-primary w-full py-4 font-display text-sm uppercase tracking-widest">Confirm Prediction</button>
     </div>
 </div>
 
 <script type="module">
+// Farcaster SDK Import (Frame v2 için gerekli)
+import sdk from "https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.0.10/+esm";
+
 const MATCHES = [
     // --- HAZİRAN 11-18 ---
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
@@ -93,8 +97,6 @@ const MATCHES = [
     { id: 24, date: 'Thu 18 June 2026', time: '06:00', stage: 'Group K', stadium: 'Mexico City', home: { n: 'Uzbekistan', c: 'UZB', f: '🇺🇿' }, away: { n: 'Colombia', c: 'COL', f: '🇨🇴' } },
     { id: 25, date: 'Thu 18 June 2026', time: '20:00', stage: 'Group A', stadium: 'Atlanta', home: { n: 'Czechia', c: 'CZE', f: '🇨🇿' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 26, date: 'Thu 18 June 2026', time: '23:00', stage: 'Group B', stadium: 'Los Angeles', home: { n: 'Switzerland', c: 'SUI', f: '🇨🇭' }, away: { n: 'Bosnia', c: 'BIH', f: '🇧🇦' } },
-
-    // --- HAZİRAN 19-28 ---
     { id: 27, date: 'Fri 19 June 2026', time: '02:00', stage: 'Group B', stadium: 'Vancouver', home: { n: 'Canada', c: 'CAN', f: '🇨🇦' }, away: { n: 'Qatar', c: 'QAT', f: '🇶🇦' } },
     { id: 28, date: 'Fri 19 June 2026', time: '05:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'Korea Rep.', c: 'KOR', f: '🇰🇷' } },
     { id: 29, date: 'Fri 19 June 2026', time: '23:00', stage: 'Group D', stadium: 'Seattle', home: { n: 'USA', c: 'USA', f: '🇺🇸' }, away: { n: 'Australia', c: 'AUS', f: '🇦🇺' } },
@@ -185,6 +187,24 @@ const MATCHES = [
     { id: 104, date: 'Sun 19 July 2026', time: '23:00', stage: 'FINAL', stadium: 'New York/NJ', home: { n: 'W101', c: 'W101', f: '🏆' }, away: { n: 'W102', c: 'W102', f: '🏆' } }
 ];
 
+// Farcaster SDK Başlatma
+async function initFarcaster() {
+    try {
+        await sdk.actions.ready();
+        const context = await sdk.context;
+        
+        // Kullanıcı bilgisini UI'da göster
+        if (context?.user) {
+            document.getElementById('user-info').innerText = `${context.user.username}`;
+        } else {
+            document.getElementById('user-info').innerText = "Connect";
+        }
+    } catch (e) {
+        console.error("Farcaster SDK error:", e);
+        document.getElementById('user-info').innerText = "Not in Farcaster";
+    }
+}
+
 function render(filter = "") {
     const list = document.getElementById('match-list');
     const filtered = MATCHES.filter(m => 
@@ -230,9 +250,24 @@ window.openModal = (id) => {
     document.getElementById('predict-modal').classList.add('open');
 };
 
+// On-chain işlem simülasyonu (Base Entegrasyonu için temel)
+document.getElementById('confirm-btn').onclick = async () => {
+    const h = document.getElementById('s-home').value;
+    const a = document.getElementById('s-away').value;
+    
+    // Farcaster SDK üzerinden işlem isteği örneği
+    // Gerçek bir USDC transferi için viem/wagmi ile transaction gönderilmelidir.
+    alert(`Prediction: ${h} - ${a}. Processing on Base...`);
+    
+    // İşlem başarılı sayalım ve kapat herşeyi
+    document.getElementById('predict-modal').classList.remove('open');
+};
+
 document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').classList.remove('open');
 document.getElementById('match-search').oninput = (e) => render(e.target.value);
 
+// Başlat
+initFarcaster();
 render();
 </script>
 </body>
