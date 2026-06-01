@@ -30,8 +30,7 @@
 <div class="header-wrap px-4 py-3">
     <div class="flex justify-between items-center mb-3">
         <div class="font-display text-lg font-black neon-g tracking-tighter uppercase">⚽ PREDICTBASE WC2026</div>
-        <!-- Connect butonu Farcaster verisi için güncellenebilir -->
-        <div id="user-info" class="text-[9px] font-bold text-green-400 border border-green-500/20 px-3 py-1 rounded-lg uppercase">Loading...</div>
+        <div id="user-display" class="text-[9px] font-bold text-green-400 border border-green-500/20 px-3 py-1 rounded-lg uppercase">Connecting...</div>
     </div>
     <input type="text" id="match-search" class="search-bar text-xs" placeholder="Search team, group, or stadium (104 matches)...">
 </div>
@@ -66,11 +65,9 @@
 </div>
 
 <script type="module">
-// Farcaster SDK Import (Frame v2 için gerekli)
 import sdk from "https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.0.10/+esm";
 
 const MATCHES = [
-    // --- HAZİRAN 11-18 ---
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 2, date: 'Fri 12 June 2026', time: '06:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Korea Republic', c: 'KOR', f: '🇰🇷' }, away: { n: 'Czechia', c: 'CZE', f: '🇨🇿' } },
     { id: 3, date: 'Fri 12 June 2026', time: '23:00', stage: 'Group B', stadium: 'Toronto', home: { n: 'Canada', c: 'CAN', f: '🇨🇦' }, away: { n: 'Bosnia and Herz.', c: 'BIH', f: '🇧🇦' } },
@@ -143,8 +140,6 @@ const MATCHES = [
     { id: 70, date: 'Sun 28 June 2026', time: '03:30', stage: 'Group K', stadium: 'Atlanta', home: { n: 'Congo DR', c: 'COD', f: '🇨🇩' }, away: { n: 'Uzbekistan', c: 'UZB', f: '🇺🇿' } },
     { id: 71, date: 'Sun 28 June 2026', time: '06:00', stage: 'Group J', stadium: 'Kansas City', home: { n: 'Algeria', c: 'ALG', f: '🇩🇿' }, away: { n: 'Austria', c: 'AUT', f: '🇦🇹' } },
     { id: 72, date: 'Sun 28 June 2026', time: '06:00', stage: 'Group J', stadium: 'Dallas', home: { n: 'Jordan', c: 'JOR', f: '🇯🇴' }, away: { n: 'Argentina', c: 'ARG', f: '🇦🇷' } },
-
-    // --- ROUND OF 32 ---
     { id: 73, date: 'Sun 28 June 2026', time: '23:00', stage: 'Round of 32', stadium: 'Los Angeles', home: { n: '2A', c: '2A', f: '🏳️' }, away: { n: '2B', c: '2B', f: '🏳️' } },
     { id: 74, date: 'Mon 29 June 2026', time: '21:00', stage: 'Round of 32', stadium: 'Houston', home: { n: '1C', c: '1C', f: '🏳️' }, away: { n: '2F', c: '2F', f: '🏳️' } },
     { id: 75, date: 'Tue 30 June 2026', time: '00:30', stage: 'Round of 32', stadium: 'Boston', home: { n: '1E', c: '1E', f: '🏳️' }, away: { n: '3ABCDF', c: '3RD', f: '🏳️' } },
@@ -161,8 +156,6 @@ const MATCHES = [
     { id: 86, date: 'Fri 03 July 2026', time: '22:00', stage: 'Round of 32', stadium: 'Dallas', home: { n: '2D', c: '2D', f: '🏳️' }, away: { n: '2G', c: '2G', f: '🏳️' } },
     { id: 87, date: 'Sat 04 July 2026', time: '02:00', stage: 'Round of 32', stadium: 'Miami', home: { n: '1J', c: '1J', f: '🏳️' }, away: { n: '2H', c: '2H', f: '🏳️' } },
     { id: 88, date: 'Sat 04 July 2026', time: '05:30', stage: 'Round of 32', stadium: 'Kansas City', home: { n: '1K', c: '1K', f: '🏳️' }, away: { n: '3DEIJL', c: '3RD', f: '🏳️' } },
-
-    // --- ROUND OF 16 ---
     { id: 89, date: 'Sat 04 July 2026', time: '21:00', stage: 'Round of 16', stadium: 'Houston', home: { n: 'W73', c: 'W73', f: '?' }, away: { n: 'W75', c: 'W75', f: '?' } },
     { id: 90, date: 'Sun 05 July 2026', time: '01:00', stage: 'Round of 16', stadium: 'Philadelphia', home: { n: 'W74', c: 'W74', f: '?' }, away: { n: 'W77', c: 'W77', f: '?' } },
     { id: 91, date: 'Mon 06 July 2026', time: '00:00', stage: 'Round of 16', stadium: 'New York/NJ', home: { n: 'W76', c: 'W76', f: '?' }, away: { n: 'W78', c: 'W78', f: '?' } },
@@ -171,37 +164,26 @@ const MATCHES = [
     { id: 94, date: 'Tue 07 July 2026', time: '04:00', stage: 'Round of 16', stadium: 'Seattle', home: { n: 'W81', c: 'W81', f: '?' }, away: { n: 'W82', c: 'W82', f: '?' } },
     { id: 95, date: 'Tue 07 July 2026', time: '20:00', stage: 'Round of 16', stadium: 'Atlanta', home: { n: 'W86', c: 'W86', f: '?' }, away: { n: 'W88', c: 'W88', f: '?' } },
     { id: 96, date: 'Wed 08 July 2026', time: '00:00', stage: 'Round of 16', stadium: 'Vancouver', home: { n: 'W85', c: 'W85', f: '?' }, away: { n: 'W87', c: 'W87', f: '?' } },
-
-    // --- QUARTER FINALS ---
     { id: 97, date: 'Fri 10 July 2026', time: '00:00', stage: 'Quarter-final', stadium: 'Boston', home: { n: 'W89', c: 'W89', f: '?' }, away: { n: 'W90', c: 'W90', f: '?' } },
     { id: 98, date: 'Fri 10 July 2026', time: '23:00', stage: 'Quarter-final', stadium: 'Los Angeles', home: { n: 'W93', c: 'W93', f: '?' }, away: { n: 'W94', c: 'W94', f: '?' } },
     { id: 99, date: 'Sun 12 July 2026', time: '01:00', stage: 'Quarter-final', stadium: 'Miami', home: { n: 'W91', c: 'W91', f: '?' }, away: { n: 'W92', c: 'W92', f: '?' } },
     { id: 100, date: 'Sun 12 July 2026', time: '05:00', stage: 'Quarter-final', stadium: 'Kansas City', home: { n: 'W95', c: 'W95', f: '?' }, away: { n: 'W96', c: 'W96', f: '?' } },
-
-    // --- SEMI FINALS ---
     { id: 101, date: 'Tue 14 July 2026', time: '23:00', stage: 'Semi-final', stadium: 'Dallas', home: { n: 'W97', c: 'W97', f: '?' }, away: { n: 'W98', c: 'W98', f: '?' } },
     { id: 102, date: 'Wed 15 July 2026', time: '23:00', stage: 'Semi-final', stadium: 'Atlanta', home: { n: 'W99', c: 'W99', f: '?' }, away: { n: 'W100', c: 'W100', f: '?' } },
-
-    // --- FINALS ---
     { id: 103, date: 'Sun 18 July 2026', time: '01:00', stage: 'Third Place', stadium: 'Miami', home: { n: 'RU101', c: 'RU1', f: '🥉' }, away: { n: 'RU102', c: 'RU2', f: '🥉' } },
     { id: 104, date: 'Sun 19 July 2026', time: '23:00', stage: 'FINAL', stadium: 'New York/NJ', home: { n: 'W101', c: 'W101', f: '🏆' }, away: { n: 'W102', c: 'W102', f: '🏆' } }
 ];
 
-// Farcaster SDK Başlatma
-async function initFarcaster() {
+async function init() {
     try {
         await sdk.actions.ready();
         const context = await sdk.context;
-        
-        // Kullanıcı bilgisini UI'da göster
         if (context?.user) {
-            document.getElementById('user-info').innerText = `${context.user.username}`;
-        } else {
-            document.getElementById('user-info').innerText = "Connect";
+            document.getElementById('user-display').innerText = context.user.username;
         }
     } catch (e) {
-        console.error("Farcaster SDK error:", e);
-        document.getElementById('user-info').innerText = "Not in Farcaster";
+        console.error("SDK Init Error", e);
+        document.getElementById('user-display').innerText = "Not Connected";
     }
 }
 
@@ -250,24 +232,16 @@ window.openModal = (id) => {
     document.getElementById('predict-modal').classList.add('open');
 };
 
-// On-chain işlem simülasyonu (Base Entegrasyonu için temel)
-document.getElementById('confirm-btn').onclick = async () => {
-    const h = document.getElementById('s-home').value;
-    const a = document.getElementById('s-away').value;
-    
-    // Farcaster SDK üzerinden işlem isteği örneği
-    // Gerçek bir USDC transferi için viem/wagmi ile transaction gönderilmelidir.
-    alert(`Prediction: ${h} - ${a}. Processing on Base...`);
-    
-    // İşlem başarılı sayalım ve kapat herşeyi
+document.getElementById('confirm-btn').onclick = () => {
+    // Base & On-chain logic placeholders
+    alert("Predict confirmed! Transaction sending via Base...");
     document.getElementById('predict-modal').classList.remove('open');
 };
 
 document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').classList.remove('open');
 document.getElementById('match-search').oninput = (e) => render(e.target.value);
 
-// Başlat
-initFarcaster();
+init();
 render();
 </script>
 </body>
