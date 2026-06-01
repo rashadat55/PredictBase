@@ -1,25 +1,10 @@
 {
-  "name": "predictbase",
-  "version": "0.1.0",
-  "private": true,
+  "name": "predictbase-farcaster",
+  "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "lucide-react": "latest"
+    "dev": "npx serve . -p 3000"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "postcss": "latest",
-    "tailwindcss": "latest"
+    "serve": "^14.2.0"
   }
 }
