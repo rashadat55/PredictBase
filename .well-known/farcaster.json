@@ -15,5 +15,24 @@
     "buttonTitle": "⚽ Predict & Win USDC",
     "splashImageUrl": "https://predictbase-score.vercel.app/icon.png",
     "splashBackgroundColor": "#05070a"
+  },
+  "frame": {
+    "version": "1",
+    "name": "PredictBase WC2026",
+    "subtitle": "Predict & Win USDC",
+    "description": "Predict World Cup 2026 matches on Base Network and win prizes.",
+    "iconUrl": "https://predictbase-score.vercel.app/icon.png",
+    "homeUrl": "https://predictbase-score.vercel.app",
+    "imageUrl": "https://predictbase-score.vercel.app/preview.png",
+    "splashImageUrl": "https://predictbase-score.vercel.app/icon.png",
+    "splashBackgroundColor": "#05070a",
+    "primaryCategory": "games",
+    "tags": ["game", "prediction", "farcaster", "sports"],
+    "tagline": "Predict matches, win prizes",
+    "heroImageUrl": "https://predictbase-score.vercel.app/preview.png",
+    "screenshotUrls": ["https://predictbase-score.vercel.app/preview.png"],
+    "ogTitle": "PredictBase",
+    "ogDescription": "Predict matches on Base Network",
+    "ogImageUrl": "https://predictbase-score.vercel.app/preview.png"
   }
 }
