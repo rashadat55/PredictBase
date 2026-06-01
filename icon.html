@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head><title>Asset Generator</title></head>
-<body style="background: #000; color: #fff; font-family: sans-serif; text-align: center;">
+<body style="background: #000; color: #fff; text-align: center; font-family: sans-serif;">
     <canvas id="icon" width="200" height="200" style="display:none"></canvas>
     <canvas id="preview" width="600" height="400" style="display:none"></canvas>
     
-    <h2>PredictBase Asset Generator</h2>
-    <button onclick="generate('icon', 200, 200)">Download icon.png</button><br><br>
-    <button onclick="generate('preview', 600, 400)">Download preview.png</button>
+    <h2>PredictBase Assets</h2>
+    <button onclick="gen('icon', 200, 200)">Download icon.png</button><br><br>
+    <button onclick="gen('preview', 600, 400)">Download preview.png</button>
 
     <script>
-        function generate(id, w, h) {
+        function gen(id, w, h) {
             const canvas = document.getElementById(id);
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#05070a';
             ctx.fillRect(0,0,w,h);
             ctx.strokeStyle = '#00e87a';
-            ctx.lineWidth = w/20;
+            ctx.lineWidth = w/15;
             ctx.strokeRect(w/10, h/10, w*0.8, h*0.8);
-            ctx.fillStyle = '#00e87a';
+            ctx.fillStyle = '#fff';
             ctx.font = `bold ${w/6}px Arial`;
             ctx.textAlign = 'center';
-            ctx.fillText('PB2026', w/2, h/2 + w/20);
+            ctx.fillText('PB26', w/2, h/2 + w/20);
             
             const link = document.createElement('a');
             link.download = id + '.png';
