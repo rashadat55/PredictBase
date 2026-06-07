@@ -1,16 +1,15 @@
 import { sdk } from 'https://esm.sh/@farcaster/frame-sdk';
 
-// --- YAPILANDIRMA ---
-const TARGET_WALLET = "0xEA61090CB8351b44D8207674dD6d89742dca857E"; // Paranın gideceği adres
-const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // Base USDC Kontratı
+// --- CONFIG ---
+const TARGET_WALLET = "0xEA61090CB8351b44D8207674dD6d89742dca857E"; 
+const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; 
 const BASE_CHAIN_ID = 8453;
 
-// --- TÜM 104 MAÇ LİSTESİ ---
+// --- 104 MATCHES ---
 const MATCHES = [
-    // --- HAZİRAN 11-18 ---
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 2, date: 'Fri 12 June 2026', time: '06:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Korea Republic', c: 'KOR', f: '🇰🇷' }, away: { n: 'Czechia', c: 'CZE', f: '🇨🇿' } },
-    { id: 3, date: 'Fri 12 June 2026', time: '23:00', stage: 'Group B', stadium: 'Toronto', home: { n: 'Canada', c: 'CAN', f: '🇨🇦' }, away: { n: 'Bosnia and Herz.', c: 'BIH', f: '🇧🇦' } },
+    { id: 3, date: 'Fri 12 June 2026', time: '23:00', stage: 'Group B', stadium: 'Toronto', home: { n: 'Canada', c: 'CAN', f: '🇨🇦' }, away: { n: 'Bosnia', c: 'BIH', f: '🇧🇦' } },
     { id: 4, date: 'Sat 13 June 2026', time: '05:00', stage: 'Group D', stadium: 'Los Angeles', home: { n: 'USA', c: 'USA', f: '🇺🇸' }, away: { n: 'Paraguay', c: 'PAR', f: '🇵🇾' } },
     { id: 5, date: 'Sat 13 June 2026', time: '23:00', stage: 'Group B', stadium: 'San Francisco', home: { n: 'Qatar', c: 'QAT', f: '🇶🇦' }, away: { n: 'Switzerland', c: 'SUI', f: '🇨🇭' } },
     { id: 6, date: 'Sun 14 June 2026', time: '02:00', stage: 'Group C', stadium: 'New York/NJ', home: { n: 'Brazil', c: 'BRA', f: '🇧🇷' }, away: { n: 'Morocco', c: 'MAR', f: '🇲🇦' } },
@@ -34,8 +33,6 @@ const MATCHES = [
     { id: 24, date: 'Thu 18 June 2026', time: '06:00', stage: 'Group K', stadium: 'Mexico City', home: { n: 'Uzbekistan', c: 'UZB', f: '🇺🇿' }, away: { n: 'Colombia', c: 'COL', f: '🇨🇴' } },
     { id: 25, date: 'Thu 18 June 2026', time: '20:00', stage: 'Group A', stadium: 'Atlanta', home: { n: 'Czechia', c: 'CZE', f: '🇨🇿' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 26, date: 'Thu 18 June 2026', time: '23:00', stage: 'Group B', stadium: 'Los Angeles', home: { n: 'Switzerland', c: 'SUI', f: '🇨🇭' }, away: { n: 'Bosnia', c: 'BIH', f: '🇧🇦' } },
-
-    // --- HAZİRAN 19-28 ---
     { id: 27, date: 'Fri 19 June 2026', time: '02:00', stage: 'Group B', stadium: 'Vancouver', home: { n: 'Canada', c: 'CAN', f: '🇨🇦' }, away: { n: 'Qatar', c: 'QAT', f: '🇶🇦' } },
     { id: 28, date: 'Fri 19 June 2026', time: '05:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'Korea Rep.', c: 'KOR', f: '🇰🇷' } },
     { id: 29, date: 'Fri 19 June 2026', time: '23:00', stage: 'Group D', stadium: 'Seattle', home: { n: 'USA', c: 'USA', f: '🇺🇸' }, away: { n: 'Australia', c: 'AUS', f: '🇦🇺' } },
@@ -160,12 +157,11 @@ async function handleTransaction() {
 
     const confirmBtn = document.getElementById('confirm-btn');
     confirmBtn.disabled = true;
-    confirmBtn.innerText = "WAITING...";
+    confirmBtn.innerText = "SENDING...";
 
     try {
-        // Alıcı adresini temizle ve hazırla
         const cleanAddress = TARGET_WALLET.toLowerCase().replace("0x", "");
-        const abiMethod = "0xa9059cbb"; // transfer(address,uint256) fonksiyon kodu
+        const abiMethod = "0xa9059cbb"; 
         const paddedAddress = cleanAddress.padStart(64, "0");
         
         // 0.002 USDC = 2000 units (6 decimals)
@@ -175,9 +171,9 @@ async function handleTransaction() {
 
         const txParams = {
             from: connectedAddress,
-            to: USDC_ADDRESS, // USDC Kontratı
-            data: transactionData, // Transfer emri
-            value: "0x0", // ÖNEMLİ: Token gönderirken ekstra ETH gönderilmez, 0 olmalı
+            to: USDC_ADDRESS, 
+            data: transactionData, 
+            value: "0x0",
             chainId: BASE_CHAIN_ID
         };
 
@@ -194,12 +190,11 @@ async function handleTransaction() {
             });
         }
 
-        alert("Success! Hash: " + txHash);
+        alert("Prediction Payment Sent! Hash: " + txHash);
         document.getElementById('predict-modal').style.display = 'none';
     } catch (err) {
         console.error(err);
-        // Hata mesajını kullanıcıya göster
-        alert("Error: " + (err.message || "Insufficient funds or rejected."));
+        alert("Transaction failed!");
     } finally {
         confirmBtn.disabled = false;
         confirmBtn.innerText = "CONFIRM PREDICTION";
@@ -224,9 +219,9 @@ function render(filter = "") {
                 <div class="text-[10px] font-black text-white text-center leading-tight">${m.home.n}</div>
             </div>
             <div class="flex flex-col items-center justify-center">
-                <div class="text-[7px] text-emerald-400 font-bold uppercase">${m.stage}</div>
+                <div class="text-[7px] text-emerald-400 font-bold uppercase tracking-tighter">${m.stage}</div>
                 <div class="text-lg font-black text-white/30">VS</div>
-                <div class="text-[7px] text-gray-500 font-bold">${m.date}</div>
+                <div class="text-[7px] text-gray-500 font-bold uppercase">${m.date}</div>
             </div>
             <div class="flex flex-col items-center w-1/3">
                 <div class="text-3xl mb-1">${m.away.f}</div>
