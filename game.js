@@ -1,11 +1,7 @@
 import sdk from "https://esm.sh/@farcaster/frame-sdk";
 
-// ✅ V2 FIX: Nullable ENV variable instead of static boolean
 let ENV = null;
 let SDK_READY = false;
-let RETRY_COUNT = 0;
-const MAX_RETRIES = 20;
-const RETRY_INTERVAL = 500;
 
 const MATCHES = [
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
@@ -114,54 +110,35 @@ const MATCHES = [
     { id: 104, date: 'Sun 19 July 2026', time: '23:00', stage: 'FINAL', stadium: 'New York/NJ', home: { n: 'W101', c: 'W101', f: '🏆' }, away: { n: 'W102', c: 'W102', f: '🏆' } }
 ];
 
-// ✅ V2 FIX: Retry initialization with dynamic detection
-async function attemptInit() {
+// ✅ SIMPLIFIED V2 FIX: Retry + render matches immediately
+async function initSDK() {
     try {
         await sdk.actions.ready();
         const context = await sdk.context;
-        
-        // Detect environment
-        const isFarcaster = window.parent !== window;
-        ENV = isFarcaster ? 'FARCASTER' : 'BASE_APP';
+        ENV = window.parent !== window ? 'FARCASTER' : 'BASE_APP';
         SDK_READY = true;
-        RETRY_COUNT = 0; // Reset on success
         
-        if (context?.user) {
-            document.getElementById('user-display').innerText = `${context.user.username} (${ENV})`;
-        } else {
-            document.getElementById('user-display').innerText = `Connected (${ENV})`;
-        }
-        
-        console.log(`✅ Init successful - ENV: ${ENV}`);
-        return true;
+        const displayText = context?.user 
+            ? `${context.user.username} (${ENV})`
+            : `Connected (${ENV})`;
+        document.getElementById('user-display').innerText = displayText;
+        console.log('✅ SDK ready:', ENV);
     } catch (e) {
-        RETRY_COUNT++;
-        
-        if (RETRY_COUNT >= MAX_RETRIES) {
-            document.getElementById('user-display').innerText = "⚠️ Retry failed";
-            console.error("Max retries exceeded", e);
-            return false;
-        }
-        
-        console.log(`⏳ Init attempt ${RETRY_COUNT}/${MAX_RETRIES}...`);
-        return false;
+        console.error('SDK error:', e.message);
+        document.getElementById('user-display').innerText = 'Guest Mode';
     }
 }
 
-// ✅ V2 FIX: Polling loop - keeps trying until SDK is ready
-function startRetryLoop() {
-    const retryInterval = setInterval(async () => {
-        if (SDK_READY) {
-            clearInterval(retryInterval);
-            return;
-        }
-        
-        const success = await attemptInit();
-        if (success) {
-            clearInterval(retryInterval);
-        }
-    }, RETRY_INTERVAL);
-}
+// Retry every 500ms for 10 seconds
+let attempts = 0;
+const retryInterval = setInterval(async () => {
+    if (SDK_READY || attempts >= 20) {
+        clearInterval(retryInterval);
+        return;
+    }
+    attempts++;
+    await initSDK();
+}, 500);
 
 function render(filter = "") {
     const list = document.getElementById('match-list');
@@ -207,39 +184,18 @@ window.openModal = (id) => {
     document.getElementById('predict-modal').classList.add('open');
 };
 
-// ✅ V2 FIX: Reset ENV before transaction
-async function submitPrediction() {
-    ENV = null; // Reset before new environment check
-    
-    const homeScore = parseInt(document.getElementById('s-home').value) || 0;
-    const awayScore = parseInt(document.getElementById('s-away').value) || 0;
-    
-    if (!SDK_READY) {
-        alert("⚠️ SDK not ready. Retrying connection...");
-        await attemptInit();
-        return;
-    }
-    
-    // Here you would add Base network transaction
-    // For now: mock submission
-    const prediction = {
-        home: homeScore,
-        away: awayScore,
-        env: ENV,
-        timestamp: new Date().toISOString()
-    };
-    
-    console.log("📊 Prediction submitted:", prediction);
-    alert(`✅ Prediction confirmed!\nHome: ${homeScore} - Away: ${awayScore}\nEnvironment: ${ENV}`);
+document.getElementById('confirm-btn').onclick = () => {
+    const homeScore = document.getElementById('s-home').value;
+    const awayScore = document.getElementById('s-away').value;
+    alert(`✅ Prediction: ${homeScore} - ${awayScore} (${ENV || 'Guest'})`);
     document.getElementById('predict-modal').classList.remove('open');
-}
+};
 
-document.getElementById('confirm-btn').onclick = submitPrediction;
 document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').classList.remove('open');
 document.getElementById('match-search').oninput = (e) => render(e.target.value);
 
-// ✅ V2 FIX: Start initialization with retry loop
-attemptInit();
-startRetryLoop();
+// ✅ CRITICAL: Render matches IMMEDIATELY (don't wait for SDK)
 render();
 
+// Start SDK initialization in background
+initSDK();
