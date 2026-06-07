@@ -1,11 +1,11 @@
 import { sdk } from 'https://esm.sh/@farcaster/frame-sdk';
 
-// --- YAPILANDIRMA ---
+// --- CONFIGURATION ---
 const TARGET_WALLET = "0xEA61090CB8351b44D8207674dD6d89742dca857E"; 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; 
 const BASE_CHAIN_ID = 8453;
 
-// --- TÜM 104 MAÇ LİSTESİ ---
+// Maç Listesi (Eksiksiz)
 const MATCHES = [
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 2, date: 'Fri 12 June 2026', time: '06:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Korea Republic', c: 'KOR', f: '🇰🇷' }, away: { n: 'Czechia', c: 'CZE', f: '🇨🇿' } },
@@ -116,26 +116,54 @@ const MATCHES = [
 let ENV = 'web';
 let connectedAddress = null;
 
-// --- TAHMİNLERİ KAYDET VE YÜKLE ---
-function savePrediction(mId, hScore, aScore, txHash) {
-    const prediction = {
-        mId,
-        hScore,
-        aScore,
-        txHash,
-        timestamp: new Date().getTime()
-    };
-    let history = JSON.parse(localStorage.getItem('predict_history') || "[]");
-    history.unshift(prediction); 
-    localStorage.setItem('predict_history', JSON.stringify(history));
-    renderHistory();
+// --- UI GÜNCELLEME ---
+function updateUI(status) {
+    const el = document.getElementById('user-display');
+    if (el) el.innerText = status;
 }
 
+// --- MAÇLARI LİSTELEME ---
+function render(filter = "") {
+    const list = document.getElementById('match-list');
+    if (!list) return;
+
+    try {
+        const filtered = MATCHES.filter(m => 
+            m.home.n.toLowerCase().includes(filter.toLowerCase()) || 
+            m.away.n.toLowerCase().includes(filter.toLowerCase()) ||
+            (m.stage && m.stage.toLowerCase().includes(filter.toLowerCase()))
+        );
+
+        list.innerHTML = filtered.map(m => `
+            <div class="bg-white/5 p-5 rounded-[2rem] border border-white/10 flex justify-between items-center relative transition-all active:scale-95 group hover:border-emerald-500/30">
+                <div class="flex flex-col items-center w-[35%] gap-1">
+                    <div class="text-4xl drop-shadow-md group-hover:scale-110 transition-transform">${m.home.f}</div>
+                    <div class="text-[9px] font-black text-white uppercase text-center leading-tight tracking-tighter">${m.home.n}</div>
+                </div>
+                <div class="flex flex-col items-center justify-center w-[30%]">
+                    <div class="text-[7px] text-emerald-500 font-black uppercase tracking-[0.2em] mb-1 opacity-80">${m.stage || ''}</div>
+                    <div class="text-xl font-black text-white/20 italic">VS</div>
+                    <div class="text-[7px] text-gray-500 font-bold uppercase mt-1 tracking-widest">${m.date ? m.date.split(' 2026')[0] : ''}</div>
+                </div>
+                <div class="flex flex-col items-center w-[35%] gap-1">
+                    <div class="text-4xl drop-shadow-md group-hover:scale-110 transition-transform">${m.away.f}</div>
+                    <div class="text-[9px] font-black text-white uppercase text-center leading-tight tracking-tighter">${m.away.n}</div>
+                </div>
+                <button onclick="window.openModal(${m.id})" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"></button>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error("Render Error:", e);
+    }
+}
+
+// --- TAHMİN GEÇMİŞİNİ LİSTELEME ---
 function renderHistory() {
     const container = document.getElementById('user-history-container');
     const list = document.getElementById('history-list');
-    const history = JSON.parse(localStorage.getItem('predict_history') || "[]");
+    if (!container || !list) return;
 
+    const history = JSON.parse(localStorage.getItem('predict_history') || "[]");
     if (history.length === 0) {
         container.classList.add('hidden');
         return;
@@ -146,71 +174,72 @@ function renderHistory() {
         const match = MATCHES.find(m => m.id == item.mId);
         if (!match) return '';
         return `
-            <div class="bg-white/5 border border-white/10 p-3 rounded-2xl flex justify-between items-center transition-all hover:bg-white/10">
+            <div class="bg-white/5 border border-white/10 p-3 rounded-2xl flex justify-between items-center mb-2">
                 <div class="flex items-center gap-3">
                     <span class="text-xl">${match.home.f} ${item.hScore} - ${item.aScore} ${match.away.f}</span>
                     <div class="flex flex-col">
                         <span class="text-[8px] text-gray-500 uppercase font-bold">${match.home.n} vs ${match.away.n}</span>
-                        <a href="https://basescan.org/tx/${item.txHash}" target="_blank" class="text-[7px] text-emerald-500 underline uppercase tracking-tighter">View on Chain</a>
+                        <a href="https://basescan.org/tx/${item.txHash}" target="_blank" class="text-[7px] text-emerald-500 underline uppercase tracking-tighter">View Tx</a>
                     </div>
                 </div>
-                <div class="flex flex-col items-end">
-                    <span class="text-[7px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-md font-black uppercase tracking-widest">Pending</span>
-                </div>
+                <span class="text-[7px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-md font-black uppercase tracking-widest">Pending</span>
             </div>
         `;
     }).join('');
 }
 
+// --- MODAL AÇMA ---
+window.openModal = (id) => {
+    const m = MATCHES.find(x => x.id === id);
+    if (!m) return;
+
+    document.getElementById('current-match-id').value = id;
+    document.getElementById('modal-title').innerText = `${m.home.n} VS ${m.away.n}`;
+    document.getElementById('m-home-flag').innerText = m.home.f;
+    document.getElementById('m-away-flag').innerText = m.away.f;
+    
+    document.getElementById('predict-modal').style.display = 'flex';
+};
+
 // --- CÜZDAN BAĞLAMA ---
 async function setupWallet() {
     const btn = document.getElementById('wallet-btn');
+    if (!btn) return;
     btn.innerText = "WAITING...";
+
     try {
         if (ENV === 'farcaster') {
-            const fcProvider = sdk.wallet.ethProvider;
-            const accounts = await fcProvider.request({ method: 'eth_requestAccounts' });
+            const accounts = await sdk.wallet.ethProvider.request({ method: 'eth_requestAccounts' });
             connectedAddress = accounts[0];
-        } else {
-            if (!window.ethereum) {
-                alert("Please open in a Web3 browser (Coinbase/MetaMask)");
-                btn.innerText = "CONNECT";
-                return;
-            }
+        } else if (window.ethereum) {
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             connectedAddress = accounts[0];
-            
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
             if (parseInt(chainId, 16) !== BASE_CHAIN_ID) {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x2105' }],
-                });
+                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x2105' }] });
             }
         }
+
         if (connectedAddress) {
             btn.innerText = `${connectedAddress.slice(0, 5).toUpperCase()}...${connectedAddress.slice(-4).toUpperCase()}`;
             btn.style.color = "#10b981";
             renderHistory();
         }
     } catch (e) {
-        console.error(e);
+        console.error("Wallet Error:", e);
         btn.innerText = "CONNECT";
     }
 }
 
-// --- İŞLEM GÖNDERME (BLOKZİNCİRİNE VERİ GÖMÜLÜ) ---
+// --- İŞLEM GÖNDERME ---
 async function handleTransaction() {
-    if (!connectedAddress) {
-        await setupWallet();
-        if (!connectedAddress) return;
-    }
+    if (!connectedAddress) { await setupWallet(); if (!connectedAddress) return; }
 
     const mId = document.getElementById('current-match-id').value;
     const hScore = document.getElementById('s-home').value;
     const aScore = document.getElementById('s-away').value;
-
     const confirmBtn = document.getElementById('confirm-btn');
+
     confirmBtn.disabled = true;
     confirmBtn.innerText = "SIGNING...";
 
@@ -218,13 +247,11 @@ async function handleTransaction() {
         const cleanAddress = TARGET_WALLET.toLowerCase().replace("0x", "");
         const abiMethod = "0xa9059cbb"; 
         const paddedAddress = cleanAddress.padStart(64, "0");
-        const amountHex = (2000).toString(16).padStart(64, "0"); // 0.002 USDC (Test)
+        const amountHex = (2000).toString(16).padStart(64, "0"); 
         
-        // --- DATA EMBEDDING (Gömülü Veri) ---
-        // abcdef (Key) + MatchID (4 hane) + HomeScore (2 hane) + AwayScore (2 hane)
         const mIdHex = parseInt(mId).toString(16).padStart(4, "0");
         const hScoreHex = parseInt(hScore).toString(16).padStart(2, "0");
-        const aScoreHex = parseInt(aScore).toString(16).padStart(2, "0");
+        const aScoreHex = parseInt(awayScore).toString(16).padStart(2, "0");
         const memo = "abcdef" + mIdHex + hScoreHex + aScoreHex;
 
         const transactionData = abiMethod + paddedAddress + amountHex + memo;
@@ -237,109 +264,68 @@ async function handleTransaction() {
             chainId: BASE_CHAIN_ID
         };
 
-        let txHash;
-        if (ENV === 'farcaster') {
-            txHash = await sdk.wallet.ethProvider.request({
-                method: 'eth_sendTransaction',
-                params: [txParams]
-            });
-        } else {
-            txHash = await window.ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [txParams]
-            });
-        }
+        const txHash = (ENV === 'farcaster') 
+            ? await sdk.wallet.ethProvider.request({ method: 'eth_sendTransaction', params: [txParams] })
+            : await window.ethereum.request({ method: 'eth_sendTransaction', params: [txParams] });
 
-        // TAHMİNİ LOKAL HAFIZAYA KAYDET
-        savePrediction(mId, hScore, aScore, txHash);
+        // Kaydet
+        const history = JSON.parse(localStorage.getItem('predict_history') || "[]");
+        history.unshift({ mId, hScore, aScore, txHash });
+        localStorage.setItem('predict_history', JSON.stringify(history));
 
-        alert(`Match ${mId} Predicted! Tx sent to Base.`);
+        alert("Prediction sent!");
         document.getElementById('predict-modal').style.display = 'none';
+        renderHistory();
     } catch (err) {
-        console.error(err);
-        alert("Transaction failed! Check your balance.");
+        alert("Error sending transaction.");
     } finally {
         confirmBtn.disabled = false;
         confirmBtn.innerText = "CONFIRM PREDICTION";
     }
 }
 
-// --- MAÇLARI LİSTELEME ---
-function render(filter = "") {
-    const list = document.getElementById('match-list');
-    if (!list) return;
-
-    const filtered = MATCHES.filter(m => 
-        m.home.n.toLowerCase().includes(filter.toLowerCase()) || 
-        m.away.n.toLowerCase().includes(filter.toLowerCase()) ||
-        m.stage.toLowerCase().includes(filter.toLowerCase())
-    );
-
-    list.innerHTML = filtered.map(m => `
-        <div class="bg-white/5 p-5 rounded-[2rem] border border-white/10 flex justify-between items-center relative transition-all active:scale-95 group hover:border-emerald-500/30">
-            <div class="flex flex-col items-center w-[35%] gap-1">
-                <div class="text-4xl drop-shadow-md group-hover:scale-110 transition-transform">${m.home.f}</div>
-                <div class="text-[9px] font-black text-white uppercase text-center leading-tight tracking-tighter">${m.home.n}</div>
-            </div>
-            
-            <div class="flex flex-col items-center justify-center w-[30%]">
-                <div class="text-[7px] text-emerald-500 font-black uppercase tracking-[0.2em] mb-1 opacity-80">${m.stage}</div>
-                <div class="text-xl font-black text-white/20 italic italic-display">VS</div>
-                <div class="text-[7px] text-gray-500 font-bold uppercase mt-1 tracking-widest">${m.date.split(' 2026')[0]}</div>
-            </div>
-
-            <div class="flex flex-col items-center w-[35%] gap-1">
-                <div class="text-4xl drop-shadow-md group-hover:scale-110 transition-transform">${m.away.f}</div>
-                <div class="text-[9px] font-black text-white uppercase text-center leading-tight tracking-tighter">${m.away.n}</div>
-            </div>
-            
-            <button onclick="window.openModal(${m.id})" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"></button>
-        </div>
-    `).join('');
-}
-
-// --- MODAL FONKSİYONLARI ---
-window.openModal = (id) => {
-    const m = MATCHES.find(x => x.id === id);
-    if (!m) return;
-
-    document.getElementById('current-match-id').value = id;
-    document.getElementById('modal-title').innerText = `${m.home.c} VS ${m.away.c}`;
-    document.getElementById('m-home-flag').innerText = m.home.f;
-    document.getElementById('m-away-flag').innerText = m.away.f;
-    
-    if(document.getElementById('m-home-code')) document.getElementById('m-home-code').innerText = m.home.n;
-    if(document.getElementById('m-away-code')) document.getElementById('m-away-code').innerText = m.away.n;
-
-    document.getElementById('predict-modal').style.display = 'flex';
-};
-
 // --- BAŞLATMA ---
 async function init() {
+    console.log("App starting...");
+    
+    // 1. Önce içeriği çiz (SDK'yı beklemeden)
     render();
-    renderHistory(); // Uygulama açıldığında varsa geçmişi çek
+    renderHistory();
 
-    document.getElementById('match-search').oninput = (e) => render(e.target.value);
-    document.getElementById('wallet-btn').onclick = setupWallet;
-    document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').style.display = 'none';
-    document.getElementById('confirm-btn').onclick = handleTransaction;
+    // 2. Event Listeners
+    const search = document.getElementById('match-search');
+    if (search) search.oninput = (e) => render(e.target.value);
+    
+    const walletBtn = document.getElementById('wallet-btn');
+    if (walletBtn) walletBtn.onclick = setupWallet;
 
+    const modalClose = document.getElementById('modal-close');
+    if (modalClose) modalClose.onclick = () => document.getElementById('predict-modal').style.display = 'none';
+
+    const confirmBtn = document.getElementById('confirm-btn');
+    if (confirmBtn) confirmBtn.onclick = handleTransaction;
+
+    // 3. Farcaster SDK (Kritik: Hata alsa bile UI'ı bozmaz)
     try {
-        console.log("Farcaster SDK init...");
         await sdk.actions.ready();
         const context = await sdk.context;
         if (context?.user) {
             ENV = 'farcaster';
-            document.getElementById('user-display').innerText = context.user.username.toUpperCase();
+            updateUI(context.user.username.toUpperCase());
             setupWallet(); 
+        } else {
+            updateUI("BROWSER MODE");
         }
     } catch (e) {
         ENV = 'web';
-        document.getElementById('user-display').innerText = "WEB BROWSER";
-        console.log("Farcaster context not found, web mode enabled.");
+        updateUI("WEB BROWSER");
+        console.log("Not in Farcaster environment.");
     }
 }
 
-init();
-
---- END OF FILE ---
+// Başlat
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
