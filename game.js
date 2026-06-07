@@ -1,5 +1,12 @@
 import sdk from "https://esm.sh/@farcaster/frame-sdk";
 
+// ✅ V2 FIX: Nullable ENV variable instead of static boolean
+let ENV = null;
+let SDK_READY = false;
+let RETRY_COUNT = 0;
+const MAX_RETRIES = 20;
+const RETRY_INTERVAL = 500;
+
 const MATCHES = [
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 2, date: 'Fri 12 June 2026', time: '06:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Korea Republic', c: 'KOR', f: '🇰🇷' }, away: { n: 'Czechia', c: 'CZE', f: '🇨🇿' } },
@@ -34,7 +41,7 @@ const MATCHES = [
     { id: 31, date: 'Sat 20 June 2026', time: '04:30', stage: 'Group C', stadium: 'Philadelphia', home: { n: 'Brazil', c: 'BRA', f: '🇧🇷' }, away: { n: 'Haiti', c: 'HAI', f: '🇭🇹' } },
     { id: 32, date: 'Sat 20 June 2026', time: '07:00', stage: 'Group D', stadium: 'San Francisco', home: { n: 'Türkiye', c: 'TUR', f: '🇹🇷' }, away: { n: 'Paraguay', c: 'PAR', f: '🇵🇾' } },
     { id: 33, date: 'Sat 20 June 2026', time: '21:00', stage: 'Group F', stadium: 'Houston', home: { n: 'Netherlands', c: 'NED', f: '🇳🇱' }, away: { n: 'Sweden', c: 'SWE', f: '🇸🇪' } },
-    { id: 34, date: 'Sun 21 June 2026', time: '00:00', stage: 'Group E', stadium: 'Toronto', home: { n: 'Germany', c: 'GER', f: '🇩🇪' }, away: { n: 'Côte d’Ivoire', c: 'CIV', f: '🇨🇮' } },
+    { id: 34, date: 'Sun 21 June 2026', time: '00:00', stage: 'Group E', stadium: 'Toronto', home: { n: 'Germany', c: 'GER', f: '🇩🇪' }, away: { n: 'Côte d'Ivoire', c: 'CIV', f: '🇨🇮' } },
     { id: 35, date: 'Sun 21 June 2026', time: '04:00', stage: 'Group E', stadium: 'Kansas City', home: { n: 'Ecuador', c: 'ECU', f: '🇪🇨' }, away: { n: 'Curaçao', c: 'CUW', f: '🇨🇼' } },
     { id: 36, date: 'Sun 21 June 2026', time: '08:00', stage: 'Group F', stadium: 'Monterrey', home: { n: 'Tunisia', c: 'TUN', f: '🇹🇳' }, away: { n: 'Japan', c: 'JPN', f: '🇯🇵' } },
     { id: 37, date: 'Sun 21 June 2026', time: '20:00', stage: 'Group H', stadium: 'Atlanta', home: { n: 'Spain', c: 'ESP', f: '🇪🇸' }, away: { n: 'Saudi Arabia', c: 'KSA', f: '🇸🇦' } },
@@ -55,7 +62,7 @@ const MATCHES = [
     { id: 52, date: 'Thu 25 June 2026', time: '02:00', stage: 'Group C', stadium: 'Atlanta', home: { n: 'Morocco', c: 'MAR', f: '🇲🇦' }, away: { n: 'Haiti', c: 'HAI', f: '🇭🇹' } },
     { id: 53, date: 'Thu 25 June 2026', time: '05:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Czechia', c: 'CZE', f: '🇨🇿' }, away: { n: 'Mexico', c: 'MEX', f: '🇲🇽' } },
     { id: 54, date: 'Thu 25 June 2026', time: '05:00', stage: 'Group A', stadium: 'Monterrey', home: { n: 'South Africa', c: 'RSA', f: '🇿🇦' }, away: { n: 'Korea Rep.', c: 'KOR', f: '🇰🇷' } },
-    { id: 55, date: 'Fri 26 June 2026', time: '00:00', stage: 'Group E', stadium: 'Philadelphia', home: { n: 'Curaçao', c: 'CUW', f: '🇨🇼' }, away: { n: 'Côte d’Ivoire', c: 'CIV', f: '🇨🇮' } },
+    { id: 55, date: 'Fri 26 June 2026', time: '00:00', stage: 'Group E', stadium: 'Philadelphia', home: { n: 'Curaçao', c: 'CUW', f: '🇨🇼' }, away: { n: 'Côte d'Ivoire', c: 'CIV', f: '🇨🇮' } },
     { id: 56, date: 'Fri 26 June 2026', time: '00:00', stage: 'Group E', stadium: 'New York/NJ', home: { n: 'Ecuador', c: 'ECU', f: '🇪🇨' }, away: { n: 'Germany', c: 'GER', f: '🇩🇪' } },
     { id: 57, date: 'Fri 26 June 2026', time: '03:00', stage: 'Group F', stadium: 'Dallas', home: { n: 'Japan', c: 'JPN', f: '🇯🇵' }, away: { n: 'Sweden', c: 'SWE', f: '🇸🇪' } },
     { id: 58, date: 'Fri 26 June 2026', time: '03:00', stage: 'Group F', stadium: 'Kansas City', home: { n: 'Tunisia', c: 'TUN', f: '🇹🇳' }, away: { n: 'Netherlands', c: 'NED', f: '🇳🇱' } },
@@ -107,17 +114,53 @@ const MATCHES = [
     { id: 104, date: 'Sun 19 July 2026', time: '23:00', stage: 'FINAL', stadium: 'New York/NJ', home: { n: 'W101', c: 'W101', f: '🏆' }, away: { n: 'W102', c: 'W102', f: '🏆' } }
 ];
 
-async function init() {
+// ✅ V2 FIX: Retry initialization with dynamic detection
+async function attemptInit() {
     try {
         await sdk.actions.ready();
         const context = await sdk.context;
+        
+        // Detect environment
+        const isFarcaster = window.parent !== window;
+        ENV = isFarcaster ? 'FARCASTER' : 'BASE_APP';
+        SDK_READY = true;
+        RETRY_COUNT = 0; // Reset on success
+        
         if (context?.user) {
-            document.getElementById('user-display').innerText = context.user.username;
+            document.getElementById('user-display').innerText = `${context.user.username} (${ENV})`;
+        } else {
+            document.getElementById('user-display').innerText = `Connected (${ENV})`;
         }
+        
+        console.log(`✅ Init successful - ENV: ${ENV}`);
+        return true;
     } catch (e) {
-        console.error("Farcaster SDK Error", e);
-        document.getElementById('user-display').innerText = "Guest Mode";
+        RETRY_COUNT++;
+        
+        if (RETRY_COUNT >= MAX_RETRIES) {
+            document.getElementById('user-display').innerText = "⚠️ Retry failed";
+            console.error("Max retries exceeded", e);
+            return false;
+        }
+        
+        console.log(`⏳ Init attempt ${RETRY_COUNT}/${MAX_RETRIES}...`);
+        return false;
     }
+}
+
+// ✅ V2 FIX: Polling loop - keeps trying until SDK is ready
+function startRetryLoop() {
+    const retryInterval = setInterval(async () => {
+        if (SDK_READY) {
+            clearInterval(retryInterval);
+            return;
+        }
+        
+        const success = await attemptInit();
+        if (success) {
+            clearInterval(retryInterval);
+        }
+    }, RETRY_INTERVAL);
 }
 
 function render(filter = "") {
@@ -164,13 +207,39 @@ window.openModal = (id) => {
     document.getElementById('predict-modal').classList.add('open');
 };
 
-document.getElementById('confirm-btn').onclick = () => {
-    alert("Predict confirmed! Sending to Base Network...");
+// ✅ V2 FIX: Reset ENV before transaction
+async function submitPrediction() {
+    ENV = null; // Reset before new environment check
+    
+    const homeScore = parseInt(document.getElementById('s-home').value) || 0;
+    const awayScore = parseInt(document.getElementById('s-away').value) || 0;
+    
+    if (!SDK_READY) {
+        alert("⚠️ SDK not ready. Retrying connection...");
+        await attemptInit();
+        return;
+    }
+    
+    // Here you would add Base network transaction
+    // For now: mock submission
+    const prediction = {
+        home: homeScore,
+        away: awayScore,
+        env: ENV,
+        timestamp: new Date().toISOString()
+    };
+    
+    console.log("📊 Prediction submitted:", prediction);
+    alert(`✅ Prediction confirmed!\nHome: ${homeScore} - Away: ${awayScore}\nEnvironment: ${ENV}`);
     document.getElementById('predict-modal').classList.remove('open');
-};
+}
 
+document.getElementById('confirm-btn').onclick = submitPrediction;
 document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').classList.remove('open');
 document.getElementById('match-search').oninput = (e) => render(e.target.value);
 
-init();
+// ✅ V2 FIX: Start initialization with retry loop
+attemptInit();
+startRetryLoop();
 render();
+
