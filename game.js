@@ -73,5 +73,8 @@ document.getElementById('confirm-btn').onclick = async () => {
 document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').classList.remove('open');
 document.getElementById('match-search').oninput = (e) => render(e.target.value);
 
-init();
+// Show matches immediately while SDK initializes
 render();
+
+// Initialize SDK in background
+setTimeout(() => init(), 100);
