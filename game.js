@@ -156,6 +156,11 @@ async function handleTransaction() {
     if (!connectedAddress) { await setupWallet(); if (!connectedAddress) return; }
 
     const confirmBtn = document.getElementById('confirm-btn');
+    // UI'dan tahminleri al
+    const matchId = document.getElementById('current-match-id').value; // Modalda gizli bir input olması lazım
+    const homeScore = document.getElementById('s-home').value;
+    const awayScore = document.getElementById('s-away').value;
+
     confirmBtn.disabled = true;
     confirmBtn.innerText = "SENDING...";
 
@@ -163,11 +168,19 @@ async function handleTransaction() {
         const cleanAddress = TARGET_WALLET.toLowerCase().replace("0x", "");
         const abiMethod = "0xa9059cbb"; 
         const paddedAddress = cleanAddress.padStart(64, "0");
+        const amountHex = (2000).toString(16).padStart(64, "0"); // 0.002 USDC
         
-        // 0.002 USDC = 2000 units (6 decimals)
-        const amountHex = (2000).toString(16).padStart(64, "0"); 
+        // --- YENİ KISIM: TAHMİN BİLGİLERİNİ EKLEME ---
+        // Match ID (4 karakter), Home Score (2 karakter), Away Score (2 karakter)
+        const mIdHex = parseInt(matchId).toString(16).padStart(4, "0");
+        const hScoreHex = parseInt(homeScore).toString(16).padStart(2, "0");
+        const aScoreHex = parseInt(awayScore).toString(16).padStart(2, "0");
         
-        const transactionData = abiMethod + paddedAddress + amountHex;
+        // Bilgi notu (Memo): Bu kısmı standart transfer datasının sonuna ekliyoruz
+        const memo = "abcdef" + mIdHex + hScoreHex + aScoreHex; 
+        // "abcdef" gibi sabit bir kelime koyuyoruz ki diğer datalardan ayıralım
+        
+        const transactionData = abiMethod + paddedAddress + amountHex + memo;
 
         const txParams = {
             from: connectedAddress,
@@ -190,7 +203,7 @@ async function handleTransaction() {
             });
         }
 
-        alert("Prediction Payment Sent! Hash: " + txHash);
+        alert("Prediction Saved! Match: " + matchId + " Score: " + homeScore + "-" + awayScore);
         document.getElementById('predict-modal').style.display = 'none';
     } catch (err) {
         console.error(err);
