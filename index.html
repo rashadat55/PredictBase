@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- 1. BU SATIR EKSİK: Warpcast bu link üzerinden manifesti doğrular -->
+    <!-- ✅ Farcaster v2 Manifest Bağlantısı -->
     <link rel="farcaster-frame-manifest" href="https://predictbase-score.vercel.app/.well-known/farcaster.json">
 
-    <!-- 2. Meta Tag (Launch Frame yapısı) -->
+    <!-- ✅ Farcaster v2 Meta Tag (launch_frame yapısı) -->
     <meta name="fc:frame" content='{"version":"next","imageUrl":"https://predictbase-score.vercel.app/preview.png","button":{"title":"⚽ Predict & Win","action":{"type":"launch_frame","name":"PredictBase WC2026","url":"https://predictbase-score.vercel.app/","splashImageUrl":"https://predictbase-score.vercel.app/icon.png","splashBackgroundColor":"#05070a"}}}' />
     
     <title>PredictBase — WC 2026</title>
@@ -24,19 +22,40 @@
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); }
         input[type="number"]::-webkit-inner-spin-button, 
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        /* Geçmiş tahmin kartları için özel stil */
+        .history-card { background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%); }
     </style>
 </head>
 <body class="antialiased">
 
-<div class="px-4 py-3 sticky top-0 bg-[#05070a]/80 backdrop-blur-md z-40 border-b border-white/5">
+<!-- Sticky Header -->
+<div class="px-4 py-3 sticky top-0 bg-[#05070a]/90 backdrop-blur-md z-40 border-b border-white/5">
     <div class="flex justify-between items-center mb-3">
         <div>
-            <h1 class="neon-g font-black text-sm uppercase tracking-tighter">⚽ PREDICTBASE</h1>
-            <div id="user-display" class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">WEB MODE</div>
+            <h1 class="neon-g font-black text-sm uppercase tracking-tighter italic">⚽ PREDICTBASE</h1>
+            <div id="user-display" class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">CONNECTING...</div>
         </div>
         <button id="wallet-btn" class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl text-emerald-500 font-black uppercase transition-all active:scale-95">CONNECT</button>
     </div>
-    <input type="text" id="match-search" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-emerald-500/50 transition-all" placeholder="Search team, group or stadium...">
+    <input type="text" id="match-search" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-emerald-500/50 transition-all" placeholder="Search team or group...">
+</div>
+
+<!-- ✅ YENİ: Kullanıcı Geçmişi (Tahminlerim) Bölümü -->
+<div id="user-history-container" class="px-4 mt-6 mb-2 hidden">
+    <h2 class="text-emerald-400 font-black text-[10px] uppercase mb-3 tracking-[0.2em] flex items-center gap-2">
+        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+        My Live Predictions
+    </h2>
+    <div id="history-list" class="flex flex-col gap-2">
+        <!-- JS: history cards will be injected here -->
+    </div>
+    <div class="h-px bg-white/5 w-full mt-6"></div>
+</div>
+
+<!-- Maç Listesi Başlığı -->
+<div class="px-4 mt-6">
+    <h2 class="text-gray-500 font-black text-[10px] uppercase tracking-[0.2em]">Available Matches</h2>
 </div>
 
 <!-- Maç Listesi -->
@@ -47,8 +66,8 @@
     <div class="bg-white text-black p-8 rounded-[2.5rem] w-full max-w-sm shadow-2xl relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
 
-<!-- Modalın içine score inputlarının yanına bunu ekle -->
-<input type="hidden" id="current-match-id">
+        <!-- Seçili Maç ID'sini tutan gizli input -->
+        <input type="hidden" id="current-match-id">
         
         <div class="flex justify-between items-center mb-8">
             <h2 id="modal-title" class="font-black text-xl uppercase tracking-tighter italic">PREDICT SCORE</h2>
