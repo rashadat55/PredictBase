@@ -4,46 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-<!-- Farcaster v2 Meta - Manifest ile tam uyumlu -->
-<meta name="fc:frame" content='{"version":"next","imageUrl":"https://predictbase-score.vercel.app/preview.png","button":{"title":"⚽ Predict & Win","action":{"type":"launch_frame","name":"PredictBase WC2026","url":"https://predictbase-score.vercel.app/","splashImageUrl":"https://predictbase-score.vercel.app/icon.png","splashBackgroundColor":"#05070a"}}}' />
+    <!-- ✅ Farcaster v2 Manifest Bağlantısı (ŞART) -->
+    <link rel="farcaster-frame-manifest" href="https://predictbase-score.vercel.app/.well-known/farcaster.json">
+
+    <!-- ✅ Farcaster v2 Meta Tag - Manifest ile birebir uyumlu -->
+    <meta name="fc:frame" content='{"version":"next","imageUrl":"https://predictbase-score.vercel.app/preview.png","button":{"title":"⚽ Predict & Win","action":{"type":"launch_frame","name":"PredictBase WC2026","url":"https://predictbase-score.vercel.app/","splashImageUrl":"https://predictbase-score.vercel.app/icon.png","splashBackgroundColor":"#05070a"}}}' />
     
     <title>PredictBase — WC 2026</title>
+    
+    <!-- Tailwind ve Fontlar -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #05070a; color: white; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #05070a; color: white; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         .neon-g { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5); }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-<div class="px-4 py-3">
+<div class="px-4 py-3 sticky top-0 bg-[#05070a]/80 backdrop-blur-md z-40 border-b border-white/5">
     <div class="flex justify-between items-center mb-3">
-        <h1 class="neon-g font-black text-sm uppercase">⚽ PREDICTBASE</h1>
-        <button id="wallet-btn" class="text-[9px] border border-emerald-500/30 px-3 py-1 rounded-lg text-emerald-500 font-bold uppercase">CONNECT</button>
+        <div>
+            <h1 class="neon-g font-black text-sm uppercase tracking-tighter">⚽ PREDICTBASE</h1>
+            <div id="user-display" class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">WEB MODE</div>
+        </div>
+        <button id="wallet-btn" class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl text-emerald-500 font-black uppercase transition-all active:scale-95">CONNECT</button>
     </div>
-    <input type="text" id="match-search" class="w-full bg-white/5 border border-white/10 p-2 rounded-lg text-xs" placeholder="Search team...">
+    <input type="text" id="match-search" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-emerald-500/50 transition-all" placeholder="Search team, group or stadium...">
 </div>
 
-<div id="match-list" class="px-4 flex flex-col gap-4"></div>
+<!-- Maç Listesi -->
+<div id="match-list" class="px-4 py-4 flex flex-col gap-3 pb-24"></div>
 
-<!-- Modal -->
-<div id="predict-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
-    <div class="bg-white text-black p-6 rounded-3xl w-[90%] max-w-sm">
-        <h2 id="modal-title" class="text-center font-black mb-4">PREDICT</h2>
-        <div class="flex justify-around items-center mb-6">
-            <div class="text-center">
-                <div id="m-home-flag" class="text-4xl"></div>
-                <input id="s-home" type="number" class="w-12 border-b-2 text-center text-xl font-bold" value="0">
+<!-- Tahmin Modalı -->
+<div id="predict-modal" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white text-black p-8 rounded-[2.5rem] w-full max-w-sm shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
+        
+        <div class="flex justify-between items-center mb-8">
+            <h2 id="modal-title" class="font-black text-xl uppercase tracking-tighter italic">PREDICT SCORE</h2>
+            <button id="modal-close" class="text-gray-300 hover:text-black text-2xl transition-colors">✕</button>
+        </div>
+
+        <div class="flex items-center justify-around gap-4 mb-10">
+            <div class="flex flex-col items-center gap-3">
+                <div id="m-home-flag" class="text-6xl drop-shadow-lg"></div>
+                <input id="s-home" type="number" class="w-16 border-b-4 border-gray-100 focus:border-emerald-500 text-center text-4xl font-black outline-none transition-all" value="0" min="0">
+                <div id="m-home-code" class="text-[10px] font-black text-gray-400 uppercase">HOME</div>
             </div>
-            <div class="font-bold">VS</div>
-            <div class="text-center">
-                <div id="m-away-flag" class="text-4xl"></div>
-                <input id="s-away" type="number" class="w-12 border-b-2 text-center text-xl font-bold" value="0">
+            
+            <div class="text-2xl font-black text-gray-200 italic">VS</div>
+            
+            <div class="flex flex-col items-center gap-3">
+                <div id="m-away-flag" class="text-6xl drop-shadow-lg"></div>
+                <input id="s-away" type="number" class="w-16 border-b-4 border-gray-100 focus:border-emerald-500 text-center text-4xl font-black outline-none transition-all" value="0" min="0">
+                <div id="m-away-code" class="text-[10px] font-black text-gray-400 uppercase">AWAY</div>
             </div>
         </div>
-        <button id="confirm-btn" class="w-full bg-emerald-500 text-white py-3 rounded-xl font-bold">CONFIRM</button>
-        <button id="modal-close" class="w-full text-gray-400 mt-2 text-sm">Cancel</button>
+
+        <button id="confirm-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+            Confirm Prediction
+        </button>
+        <p class="text-[9px] text-center mt-4 text-gray-400 font-bold uppercase tracking-widest">Fee: 0.002 USDC on Base</p>
     </div>
 </div>
 
