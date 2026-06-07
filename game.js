@@ -53,12 +53,12 @@ async function handleTransaction() {
            ERC-20 Transfer Verisi Oluşturma:
            Method ID (transfer): 0xa9059cbb
            Param 1: Alıcı adresi (32 byte padding)
-           Param 2: Miktar (2 USDC = 2,000,000 = 0x1e8480) (32 byte padding)
+           Param 2: Miktar (0.002 USDC = 2,000 = 0x1e8480) (32 byte padding)
         */
         const cleanAddress = TARGET_WALLET.toLowerCase().replace("0x", "");
         const abiMethod = "0xa9059cbb"; 
         const paddedAddress = cleanAddress.padStart(64, "0");
-        const amountHex = (2000000).toString(16).padStart(64, "0"); // 2 USDC (6 Decimals)
+        const amountHex = (2000).toString(16).padStart(64, "0"); // 0.002 USDC (6 Decimals)
         
         const transactionData = abiMethod + paddedAddress + amountHex;
 
