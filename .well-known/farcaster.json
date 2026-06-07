@@ -1,4 +1,3 @@
-
 {
   "accountAssociation": {
     "header": "eyJmaWQiOjEzMjc2ODIsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg2QjVDNEUxRTExMjE3MzE4ZTAzOWVFNDBCMjYxNzQzMTZmODk2YTdEIn0",
@@ -9,19 +8,12 @@
     "version": "1",
     "name": "PredictBase WC2026",
     "subtitle": "Predict scores, win USDC.",
-    "description": "Predict World Cup 2026 match scores on the Base network. The ultimate sports prediction experience on Farcaster.",
+    "description": "Predict World Cup 2026 match scores on the Base network.",
     "iconUrl": "https://predictbase-score.vercel.app/icon.png",
     "homeUrl": "https://predictbase-score.vercel.app",
     "imageUrl": "https://predictbase-score.vercel.app/preview.png",
     "buttonTitle": "⚽ Predict & Win",
     "splashImageUrl": "https://predictbase-score.vercel.app/icon.png",
-    "splashBackgroundColor": "#05070a",
-    "primaryCategory": "games",
-    "tags": [
-      "game",
-      "sports",
-      "prediction",
-      "base"
-    ]
+    "splashBackgroundColor": "#05070a"
   }
 }
