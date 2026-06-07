@@ -160,11 +160,12 @@ async function handleTransaction() {
 
     const confirmBtn = document.getElementById('confirm-btn');
     confirmBtn.disabled = true;
-    confirmBtn.innerText = "SENDING...";
+    confirmBtn.innerText = "WAITING...";
 
     try {
+        // Alıcı adresini temizle ve hazırla
         const cleanAddress = TARGET_WALLET.toLowerCase().replace("0x", "");
-        const abiMethod = "0xa9059cbb"; 
+        const abiMethod = "0xa9059cbb"; // transfer(address,uint256) fonksiyon kodu
         const paddedAddress = cleanAddress.padStart(64, "0");
         
         // 0.002 USDC = 2000 units (6 decimals)
@@ -174,8 +175,9 @@ async function handleTransaction() {
 
         const txParams = {
             from: connectedAddress,
-            to: USDC_ADDRESS, 
-            data: transactionData, 
+            to: USDC_ADDRESS, // USDC Kontratı
+            data: transactionData, // Transfer emri
+            value: "0x0", // ÖNEMLİ: Token gönderirken ekstra ETH gönderilmez, 0 olmalı
             chainId: BASE_CHAIN_ID
         };
 
@@ -192,11 +194,12 @@ async function handleTransaction() {
             });
         }
 
-        alert("Prediction Payment Sent! Hash: " + txHash);
+        alert("Success! Hash: " + txHash);
         document.getElementById('predict-modal').style.display = 'none';
     } catch (err) {
         console.error(err);
-        alert("Transaction failed!");
+        // Hata mesajını kullanıcıya göster
+        alert("Error: " + (err.message || "Insufficient funds or rejected."));
     } finally {
         confirmBtn.disabled = false;
         confirmBtn.innerText = "CONFIRM PREDICTION";
