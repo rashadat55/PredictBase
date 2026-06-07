@@ -1,0 +1,22 @@
+{
+  "name": "PredictBase WC 2026",
+  "short_name": "PredictBase",
+  "icons": [
+    {
+      "src": "https://predictbase-score.vercel.app/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://predictbase-score.vercel.app/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05070a",
+  "theme_color": "#10b981"
+}
