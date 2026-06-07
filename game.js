@@ -1,11 +1,11 @@
 import { sdk } from 'https://esm.sh/@farcaster/frame-sdk';
 
-// --- CONFIG ---
-const TARGET_WALLET = "0xEA61090CB8351b44D8207674dD6d89742dca857E"; 
-const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; 
-const BASE_CHAIN_ID = 8453;
+// --- CONFIGURATION ---
+const TARGET_WALLET = "0xEA61090CB8351b44D8207674dD6d89742dca857E"; // Ödemenin gideceği adres
+const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // Base USDC Kontratı
+const BASE_CHAIN_ID = 8453; // Base Mainnet
 
-// --- 104 MATCHES ---
+// --- FULL 104 MATCHES LIST ---
 const MATCHES = [
     { id: 1, date: 'Thu 11 June 2026', time: '23:00', stage: 'Group A', stadium: 'Mexico City', home: { n: 'Mexico', c: 'MEX', f: '🇲🇽' }, away: { n: 'South Africa', c: 'RSA', f: '🇿🇦' } },
     { id: 2, date: 'Fri 12 June 2026', time: '06:00', stage: 'Group A', stadium: 'Guadalajara', home: { n: 'Korea Republic', c: 'KOR', f: '🇰🇷' }, away: { n: 'Czechia', c: 'CZE', f: '🇨🇿' } },
@@ -79,8 +79,6 @@ const MATCHES = [
     { id: 70, date: 'Sun 28 June 2026', time: '03:30', stage: 'Group K', stadium: 'Atlanta', home: { n: 'Congo DR', c: 'COD', f: '🇨🇩' }, away: { n: 'Uzbekistan', c: 'UZB', f: '🇺🇿' } },
     { id: 71, date: 'Sun 28 June 2026', time: '06:00', stage: 'Group J', stadium: 'Kansas City', home: { n: 'Algeria', c: 'ALG', f: '🇩🇿' }, away: { n: 'Austria', c: 'AUT', f: '🇦🇹' } },
     { id: 72, date: 'Sun 28 June 2026', time: '06:00', stage: 'Group J', stadium: 'Dallas', home: { n: 'Jordan', c: 'JOR', f: '🇯🇴' }, away: { n: 'Argentina', c: 'ARG', f: '🇦🇷' } },
-
-    // --- ROUND OF 32 ---
     { id: 73, date: 'Sun 28 June 2026', time: '23:00', stage: 'Round of 32', stadium: 'Los Angeles', home: { n: '2A', c: '2A', f: '🏳️' }, away: { n: '2B', c: '2B', f: '🏳️' } },
     { id: 74, date: 'Mon 29 June 2026', time: '21:00', stage: 'Round of 32', stadium: 'Houston', home: { n: '1C', c: '1C', f: '🏳️' }, away: { n: '2F', c: '2F', f: '🏳️' } },
     { id: 75, date: 'Tue 30 June 2026', time: '00:30', stage: 'Round of 32', stadium: 'Boston', home: { n: '1E', c: '1E', f: '🏳️' }, away: { n: '3RD', c: '3RD', f: '🏳️' } },
@@ -97,8 +95,6 @@ const MATCHES = [
     { id: 86, date: 'Fri 03 July 2026', time: '22:00', stage: 'Round of 32', stadium: 'Dallas', home: { n: '2D', c: '2D', f: '🏳️' }, away: { n: '2G', c: '2G', f: '🏳️' } },
     { id: 87, date: 'Sat 04 July 2026', time: '02:00', stage: 'Round of 32', stadium: 'Miami', home: { n: '1J', c: '1J', f: '🏳️' }, away: { n: '2H', c: '2H', f: '🏳️' } },
     { id: 88, date: 'Sat 04 July 2026', time: '05:30', stage: 'Round of 32', stadium: 'Kansas City', home: { n: '1K', c: '1K', f: '🏳️' }, away: { n: '3RD', c: '3RD', f: '🏳️' } },
-
-    // --- ROUND OF 16 ---
     { id: 89, date: 'Sat 04 July 2026', time: '21:00', stage: 'Round of 16', stadium: 'Houston', home: { n: 'W73', c: 'W73', f: '?' }, away: { n: 'W75', c: 'W75', f: '?' } },
     { id: 90, date: 'Sun 05 July 2026', time: '01:00', stage: 'Round of 16', stadium: 'Philadelphia', home: { n: 'W74', c: 'W74', f: '?' }, away: { n: 'W77', c: 'W77', f: '?' } },
     { id: 91, date: 'Mon 06 July 2026', time: '00:00', stage: 'Round of 16', stadium: 'New York/NJ', home: { n: 'W76', c: 'W76', f: '?' }, away: { n: 'W78', c: 'W78', f: '?' } },
@@ -107,18 +103,11 @@ const MATCHES = [
     { id: 94, date: 'Tue 07 July 2026', time: '04:00', stage: 'Round of 16', stadium: 'Seattle', home: { n: 'W81', c: 'W81', f: '?' }, away: { n: 'W82', c: 'W82', f: '?' } },
     { id: 95, date: 'Tue 07 July 2026', time: '20:00', stage: 'Round of 16', stadium: 'Atlanta', home: { n: 'W86', c: 'W86', f: '?' }, away: { n: 'W88', c: 'W88', f: '?' } },
     { id: 96, date: 'Wed 08 July 2026', time: '00:00', stage: 'Round of 16', stadium: 'Vancouver', home: { n: 'W85', c: 'W85', f: '?' }, away: { n: 'W87', c: 'W87', f: '?' } },
-
-    // --- QUARTER FINALS ---
     { id: 97, date: 'Fri 10 July 2026', time: '00:00', stage: 'Quarter-final', stadium: 'Boston', home: { n: 'W89', c: 'W89', f: '?' }, away: { n: 'W90', c: 'W90', f: '?' } },
     { id: 98, date: 'Fri 10 July 2026', time: '23:00', stage: 'Quarter-final', stadium: 'Los Angeles', home: { n: 'W93', c: 'W93', f: '?' }, away: { n: 'W94', c: 'W94', f: '?' } },
-    { id: 99, date: 'Sun 12 July 2026', time: '01:00', stage: 'Quarter-final', stadium: 'Miami', home: { n: 'W91', c: 'W91', f: '?' }, away: { n: 'W92', c: 'W92', f: '?' } },
     { id: 100, date: 'Sun 12 July 2026', time: '05:00', stage: 'Quarter-final', stadium: 'Kansas City', home: { n: 'W95', c: 'W95', f: '?' }, away: { n: 'W96', c: 'W96', f: '?' } },
-
-    // --- SEMI FINALS ---
     { id: 101, date: 'Tue 14 July 2026', time: '23:00', stage: 'Semi-final', stadium: 'Dallas', home: { n: 'W97', c: 'W97', f: '?' }, away: { n: 'W98', c: 'W98', f: '?' } },
     { id: 102, date: 'Wed 15 July 2026', time: '23:00', stage: 'Semi-final', stadium: 'Atlanta', home: { n: 'W99', c: 'W99', f: '?' }, away: { n: 'W100', c: 'W100', f: '?' } },
-
-    // --- FINALS ---
     { id: 103, date: 'Sun 18 July 2026', time: '01:00', stage: 'Third Place', stadium: 'Miami', home: { n: 'RU101', c: 'RU1', f: '🥉' }, away: { n: 'RU102', c: 'RU2', f: '🥉' } },
     { id: 104, date: 'Sun 19 July 2026', time: '23:00', stage: 'FINAL', stadium: 'New York/NJ', home: { n: 'W101', c: 'W101', f: '🏆' }, away: { n: 'W102', c: 'W102', f: '🏆' } }
 ];
@@ -136,31 +125,48 @@ async function setupWallet() {
             const accounts = await fcProvider.request({ method: 'eth_requestAccounts' });
             connectedAddress = accounts[0];
         } else {
-            if (!window.ethereum) { alert("Please use a Web3 browser"); return; }
+            if (!window.ethereum) {
+                alert("Please use a Web3 browser (MetaMask, Coinbase Wallet, etc.)");
+                btn.innerText = "CONNECT";
+                return;
+            }
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             connectedAddress = accounts[0];
+            
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
             if (parseInt(chainId, 16) !== BASE_CHAIN_ID) {
-                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x2105' }] });
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x2105' }],
+                    });
+                } catch (e) {
+                    console.error("Network switch failed");
+                }
             }
         }
         if (connectedAddress) {
             btn.innerText = `${connectedAddress.slice(0, 5)}...${connectedAddress.slice(-4)}`;
             btn.style.color = "#10b981";
         }
-    } catch (e) { btn.innerText = "CONNECT"; }
+    } catch (e) {
+        console.error(e);
+        btn.innerText = "CONNECT";
+    }
 }
 
-// --- USDC İŞLEMİ GÖNDERME (0.002 USDC TEST) ---
+// --- USDC İŞLEMİ GÖNDERME (0.002 USDC) ---
 async function handleTransaction() {
-    if (!connectedAddress) { await setupWallet(); if (!connectedAddress) return; }
+    if (!connectedAddress) {
+        await setupWallet();
+        if (!connectedAddress) return;
+    }
 
-    const confirmBtn = document.getElementById('confirm-btn');
-    // UI'dan tahminleri al
-    const matchId = document.getElementById('current-match-id').value; // Modalda gizli bir input olması lazım
+    const matchId = document.getElementById('current-match-id').value;
     const homeScore = document.getElementById('s-home').value;
     const awayScore = document.getElementById('s-away').value;
 
+    const confirmBtn = document.getElementById('confirm-btn');
     confirmBtn.disabled = true;
     confirmBtn.innerText = "SENDING...";
 
@@ -168,18 +174,16 @@ async function handleTransaction() {
         const cleanAddress = TARGET_WALLET.toLowerCase().replace("0x", "");
         const abiMethod = "0xa9059cbb"; 
         const paddedAddress = cleanAddress.padStart(64, "0");
-        const amountHex = (2000).toString(16).padStart(64, "0"); // 0.002 USDC
         
-        // --- YENİ KISIM: TAHMİN BİLGİLERİNİ EKLEME ---
-        // Match ID (4 karakter), Home Score (2 karakter), Away Score (2 karakter)
+        // 0.002 USDC = 2000 units (6 decimals)
+        const amountHex = (2000).toString(16).padStart(64, "0"); 
+        
+        // Metadata: abcdef + ID (4) + Score1 (2) + Score2 (2)
         const mIdHex = parseInt(matchId).toString(16).padStart(4, "0");
         const hScoreHex = parseInt(homeScore).toString(16).padStart(2, "0");
         const aScoreHex = parseInt(awayScore).toString(16).padStart(2, "0");
-        
-        // Bilgi notu (Memo): Bu kısmı standart transfer datasının sonuna ekliyoruz
-        const memo = "abcdef" + mIdHex + hScoreHex + aScoreHex; 
-        // "abcdef" gibi sabit bir kelime koyuyoruz ki diğer datalardan ayıralım
-        
+        const memo = "abcdef" + mIdHex + hScoreHex + aScoreHex;
+
         const transactionData = abiMethod + paddedAddress + amountHex + memo;
 
         const txParams = {
@@ -203,11 +207,11 @@ async function handleTransaction() {
             });
         }
 
-        alert("Prediction Saved! Match: " + matchId + " Score: " + homeScore + "-" + awayScore);
+        alert(`Prediction Confirmed! ID: ${matchId}, Score: ${homeScore}-${awayScore}`);
         document.getElementById('predict-modal').style.display = 'none';
     } catch (err) {
         console.error(err);
-        alert("Transaction failed!");
+        alert("Transaction failed! Make sure you have USDC and ETH on Base.");
     } finally {
         confirmBtn.disabled = false;
         confirmBtn.innerText = "CONFIRM PREDICTION";
@@ -226,53 +230,68 @@ function render(filter = "") {
     );
 
     list.innerHTML = filtered.map(m => `
-        <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center relative mb-4">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center relative mb-4 transition-all hover:border-emerald-500/50">
             <div class="flex flex-col items-center w-1/3">
                 <div class="text-3xl mb-1">${m.home.f}</div>
-                <div class="text-[10px] font-black text-white text-center leading-tight">${m.home.n}</div>
+                <div class="text-[10px] font-black text-white text-center leading-tight uppercase">${m.home.n}</div>
             </div>
             <div class="flex flex-col items-center justify-center">
-                <div class="text-[7px] text-emerald-400 font-bold uppercase tracking-tighter">${m.stage}</div>
-                <div class="text-lg font-black text-white/30">VS</div>
+                <div class="text-[7px] text-emerald-400 font-bold uppercase tracking-widest">${m.stage}</div>
+                <div class="text-lg font-black text-white/20 italic">VS</div>
                 <div class="text-[7px] text-gray-500 font-bold uppercase">${m.date}</div>
             </div>
             <div class="flex flex-col items-center w-1/3">
                 <div class="text-3xl mb-1">${m.away.f}</div>
-                <div class="text-[10px] font-black text-white text-center leading-tight">${m.away.n}</div>
+                <div class="text-[10px] font-black text-white text-center leading-tight uppercase">${m.away.n}</div>
             </div>
             <button onclick="window.openModal(${m.id})" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"></button>
         </div>
     `).join('');
 }
 
+// --- MODAL LOGIC ---
 window.openModal = (id) => {
     const m = MATCHES.find(x => x.id === id);
     if (!m) return;
+
+    // Set hidden ID
+    document.getElementById('current-match-id').value = id;
+
+    // Fill Modal
     document.getElementById('modal-title').innerText = `${m.home.c} VS ${m.away.c}`;
     document.getElementById('m-home-flag').innerText = m.home.f;
     document.getElementById('m-away-flag').innerText = m.away.f;
+    
+    // Fill Codes (if exists)
+    if(document.getElementById('m-home-code')) document.getElementById('m-home-code').innerText = m.home.n;
+    if(document.getElementById('m-away-code')) document.getElementById('m-away-code').innerText = m.away.n;
+
     document.getElementById('predict-modal').style.display = 'flex';
 };
 
 // --- INIT ---
 async function init() {
     render();
+
+    // Event Listeners
     document.getElementById('match-search').oninput = (e) => render(e.target.value);
     document.getElementById('wallet-btn').onclick = setupWallet;
     document.getElementById('modal-close').onclick = () => document.getElementById('predict-modal').style.display = 'none';
     document.getElementById('confirm-btn').onclick = handleTransaction;
 
+    // Farcaster SDK Setup
     try {
         await sdk.actions.ready();
         const context = await sdk.context;
         if (context?.user) {
             ENV = 'farcaster';
             document.getElementById('user-display').innerText = context.user.username.toUpperCase();
-            setupWallet();
+            setupWallet(); // Try auto-connect in Farcaster
         }
     } catch (e) {
         ENV = 'web';
         document.getElementById('user-display').innerText = "WEB MODE";
+        console.log("Browser mode active");
     }
 }
 
